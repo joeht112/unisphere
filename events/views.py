@@ -88,7 +88,12 @@ def event_list(request):
     for event in events:
         average_rating = event.ratings.aggregate(Avg('rating'))['rating__avg'] or 0.0
         event.average_rating = average_rating
-        event.user_has_approved_ticket = Ticket.objects.filter(ticket_holder=request.user, event=event, approved=True).exists()
+
+        if request.user.is_authenticated:
+            event.user_has_approved_ticket = Ticket.objects.filter(
+                ticket_holder=request.user, event=event, approved=True).exists()
+        else:
+            event.user_has_approved_ticket = False
 
     if request.method == 'GET' and 'interest' in request.GET:
         selected_interest = get_object_or_404(Interests, pk=request.GET['interest'])
@@ -119,11 +124,15 @@ def community_list(request):
     return render(request, 'events/community_list.html', context)
 
 @login_required
-@user_passes_test(lambda user: user.groups.filter(name='Events Organiser').exists())
 def manage_items(request):
     """
-    View for Events Organisers to manage (add, edit, delete) courses, events, and communities.
+    View for managing courses, events, communities, and tickets.
+    Restricted to superusers and "Events Organiser" group members.
     """
+    if not (request.user.is_superuser or request.user.groups.filter(name='Events Organiser').exists()):
+        messages.error(request, "Only admin has permission to access this page.")
+        return redirect('home')
+
     courses = Course.objects.all()
     events = Event.objects.all()
     communities = Community.objects.all()
@@ -139,40 +148,28 @@ def manage_items(request):
             course_form = CourseForm(request.POST)
             if course_form.is_valid():
                 course_form.save()
-                messages.add_message(
-                    request, 
-                    messages.SUCCESS, 
-                    'Course creation successfull!')
+                messages.success(request, 'Course created successfully!')
                 return redirect('manage_items')
 
         if 'create_event' in request.POST:
             event_form = EventForm(request.POST)
             if event_form.is_valid():
                 event_form.save()
-                messages.add_message(
-                    request, 
-                    messages.SUCCESS, 
-                    'Event creation successfull!')
+                messages.success(request, 'Event created successfully!')
                 return redirect('manage_items')
 
         if 'create_community' in request.POST:
             community_form = CommunityForm(request.POST)
             if community_form.is_valid():
                 community_form.save()
-                messages.add_message(
-                    request, 
-                    messages.SUCCESS, 
-                    'Community creation successfull!')
+                messages.success(request, 'Community created successfully!')
                 return redirect('manage_items')
-        
+
         if 'create_ticket' in request.POST:
             ticket_form = TicketForm(request.POST)
             if ticket_form.is_valid():
                 ticket_form.save()
-                messages.add_message(
-                    request, 
-                    messages.SUCCESS, 
-                    'Ticket creation successfull!')
+                messages.success(request, 'Ticket created successfully!')
                 return redirect('manage_items')
 
     context = {
