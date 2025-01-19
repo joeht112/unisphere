@@ -85,6 +85,12 @@
                             </li>
                             <li><a class="dropdown-item" href="{% url 'profile' %}">Edit Profile</a></li>
                             <li><a class="dropdown-item" href="{% url 'manage_items' %}">Manage Items</a></li>
+
+                            <li>
+                                {% if can_manage_items %}
+    <a href="{% url 'manage_items' %}">Manage Items</a>
+{% endif %}
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item">

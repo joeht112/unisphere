@@ -1716,3 +1716,8 @@ django.urls.exceptions.NoReverseMatch: Reverse for 'event_list' not found. 'even
 2025-01-19 14:50:32,960 - INFO - Watching for file changes with StatReloader
 2025-01-19 14:50:43,618 - INFO - /workspace/unisphere/events/views.py changed, reloading.
 2025-01-19 14:50:44,004 - INFO - Watching for file changes with StatReloader
+2025-01-19 19:42:46,582 - INFO - Watching for file changes with StatReloader
+2025-01-19 19:43:33,880 - INFO - Watching for file changes with StatReloader
+2025-01-19 19:44:48,954 - INFO - Watching for file changes with StatReloader
+2025-01-19 19:48:06,761 - INFO - Watching for file changes with StatReloader
+2025-01-19 19:48:48,396 - INFO - Watching for file changes with StatReloader
